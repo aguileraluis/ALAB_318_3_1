@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const comments = require("../data/comments");
 
 const posts = require("../data/posts");
 const error = require("../utilities/error");
@@ -7,29 +8,35 @@ const error = require("../utilities/error");
 router
   .route("/")
   .get((req, res) => {
+    const userId = req.query["userId"];
+    if (userId) {
+      let userPosts = [];
+      posts.find((post) => {
+        if (post.userId == userId) {
+          userPosts.push(post);
+        }
+      });
+      
+      const links = [
+        {
+          href: "posts/:id",
+          rel: ":id",
+          type: "GET",
+        },
+      ];
 
-    const userId = req.query["userId"]; 
-    console.log(userId); 
+      res.json({ userPosts, links });
+    } else {
+      const links = [
+        {
+          href: "posts/:id",
+          rel: ":id",
+          type: "GET",
+        },
+      ];
 
-    let userPosts = []; 
-    posts.find((post) => {
-      if (post.userId == userId) {
-      userPosts.push(post); 
-      }
-    })
-
-    console.log(userPosts); 
-
-    
-    const links = [
-      {
-        href: "posts/:id",
-        rel: ":id",
-        type: "GET",
-      },
-    ];
-
-    res.json({ userPosts, links });
+      res.json({ posts, links });
+    }
   })
   .post((req, res, next) => {
     if (req.body.userId && req.body.title && req.body.content) {
@@ -91,7 +98,34 @@ router
     else next();
   });
 
-module.exports = router;
+router.route("/:id/comments").get((req, res, next) => {
+  let id = req.params.id;
+  let userId = req.query["userId"];
 
-// 1. http://localhost:3000/api/users/3/posts?api-key=perscholas
-// 2. http://localhost:3000/api/posts?userId=1&api-key=perscholas
+  if (userId) {
+    let userPosts = [];
+    posts.find((post) => {
+      if (post.id == id) {
+        comments.find((comment) => {
+          if (comment.userId == userId && comment.postId == id) {
+            userPosts.push(comment);
+          }
+        });
+      }
+    });
+
+    return res.json(userPosts);
+  } else {
+    let userPosts = [];
+
+    comments.find((comment) => {
+      if (comment.postId == id) {
+        userPosts.push(comment);
+      }
+    });
+
+    return res.json(userPosts);
+  }
+});
+
+module.exports = router;

@@ -70,6 +70,20 @@ const posts = [
     content:
       "ea velit perferendis earum ut voluptatem voluptate itaque iusto\ntotam pariatur in\nnemo voluptatem voluptatem autem magni tempora minima in\nest distinctio qui assumenda accusamus dignissimos officia nesciunt nobis",
   },
+  {
+    id: 10,
+    userId: 2,
+    title: "qui explicabo molestiae dolorem",
+    content:
+      "rerum ut et numquam laborum odit est sit\nid qui sint in\nquasi tenetur tempore aperiam et quaerat qui in\nrerum officiis sequi cumque quod",
+  },
+  {
+    id: 11,
+    userId: 1,
+    title: "magnam ut rerum iure",
+    content:
+      "ea velit perferendis earum ut voluptatem voluptate itaque iusto\ntotam pariatur in\nnemo voluptatem voluptatem autem magni tempora minima in\nest distinctio qui assumenda accusamus dignissimos officia nesciunt nobis",
+  },
 ];
 
 module.exports = posts;

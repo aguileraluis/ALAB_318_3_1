@@ -1,45 +1,73 @@
-const express = require("express"); 
-const router = express.Router(); 
+const express = require("express");
+const router = express.Router();
 
-const comments = require("../data/comments"); 
-const error = require("../utilities/error"); 
+const comments = require("../data/comments");
+const error = require("../utilities/error");
 
 router
-.route("/")
-.get((req, res) => {
-  
-  const userId = req.query["userId"]; 
-  
-  let userComments = []; 
-  comments.find((comment) => {
-    if (comment.userId == userId) {
-      userComments.push(comment); 
+  .route("/")
+  .get((req, res) => {
+    const userId = req.query["userId"];
+    const postId = req.query["postId"];
+
+    if (userId) {
+      let userComments = [];
+      comments.find((comment) => {
+        if (comment.userId == userId) {
+          userComments.push(comment);
+        }
+      });
+
+      const links = [
+        {
+          href: "comments/:id",
+          rel: ":id",
+          type: "GET",
+        },
+      ];
+
+      res.json({ userComments, links });
+    } else if (postId) {
+      let userComments = [];
+      comments.find((comment) => {
+        if (comment.postId == postId) {
+          userComments.push(comment);
+        }
+      });
+
+      const links = [
+        {
+          href: "comments/:id",
+          rel: ":id",
+          type: "GET",
+        },
+      ];
+
+      res.json({ userComments, links });
+    } else {
+      const links = [
+        {
+          href: "comments/:id",
+          rel: ":id",
+          type: "GET",
+        },
+      ];
+
+      res.json({ comments, links });
     }
   })
-
-  console.log(userComments); 
-  const links = [
-    {
-      href: "comments/:id",
-      rel: ":id",
-      type: "GET",
-    },
-  ];
-
-  res.json({ userComments, links });
-})
-.post((req, res, next) => {
-  if (req.body.userId && req.body.commentId && req.body.body) {
-    const comment = {
-      id: comments[comments.length - 1].id + 1,
-      userId: req.body.userId,
-      commentId: req.body.commentId,
-      body: req.body.body,
-    };
-    comments.push(comment);
-    res.json(comments[comments.length - 1]);
-  } else next(error(400, "Insufficient Data"));
-});
+  .post((req, res, next) => {
+    if (req.body.userId && req.body.postId && req.body.body) {
+      const comment = {
+        id: comments[comments.length - 1].id + 1,
+        userId: req.body.userId,
+        postId: req.body.postId,
+        body: req.body.body,
+      };
+      comments.push(comment);
+      res.json(comments[comments.length - 1]);
+    } else next(error(400, "Insufficient Data"));
+  });
 
 router
   .route("/:id")
@@ -86,5 +114,4 @@ router
     else next();
   });
 
-module.exports = router; 
-
+module.exports = router;

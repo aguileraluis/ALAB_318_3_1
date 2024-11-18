@@ -56,6 +56,7 @@ app.use("/api/users", users);
 app.use("/api/users/:id/posts", users);  
 app.use("/api/posts", posts);
 app.use("/api/comments", comments); 
+app.use("/api/posts/:id/comments", posts); 
 
 // app.use("/api/comments", comments); 
 
@@ -131,3 +132,12 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Server listening on port: ${port}.`);
 });
+
+// Routes 
+
+// 1. http://localhost:3000/api/users/3/posts?api-key=perscholas
+// 2. http://localhost:3000/api/posts?userId=1&api-key=perscholas
+// 3 http://localhost:3000/api/comments?userId=4&api-key=perscholas
+// 4 http://localhost:3000/api/comments?commentId=3&api-key=perscholas
+// 5 http://localhost:3000/api/posts/4/comments?userId=2&api-key=perscholas
+// 6 http://localhost:3000/api/users/3/comments?postId=5&api-key=perscholas

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const comments = require("../data/comments");
 
 const users = require("../data/users");
 const posts = require("../data/posts");
@@ -82,23 +83,42 @@ router
     else next();
   });
 
-router
-  .route("/:id/posts")
-  .get((req, res, next) => {
-    let id = req.params.id; 
+router.route("/:id/posts").get((req, res, next) => {
+  let id = req.params.id;
 
-      let userPosts = []; 
-      posts.find((post)=> {
-      if (post.userId == id) {
-        userPosts.push(post); 
-      };     
-      })
+  let userPosts = [];
+  posts.find((post) => {
+    if (post.userId == id) {
+      userPosts.push(post);
+    }
+  });
 
+  return res.json(userPosts);
+});
 
-      console.log(userPosts); 
-       return res.json(userPosts); 
-     }); 
+router.route("/:id/comments").get((req, res, next) => {
+  let id = req.params.id;
+  let postId = req.query["postId"];
 
+  if (postId) {
+    let userPosts = [];
+    comments.find((comment) => {
+      if (comment.userId == id && comment.postId == postId) {
+        userPosts.push(comment);
+      }
+    });
+
+    return res.json(userPosts);
+  } else {
+    let userPosts = [];
+
+    comments.find((comment) => {
+      if (comment.userId == id) {
+        userPosts.push(comment);
+      }
+    });
+
+    return res.json(userPosts);
+  }
+});
 module.exports = router;
-
-// http://localhost:3000/api/users/3/posts?api-key=perscholas
